@@ -220,4 +220,4 @@ Crea un anuncio breve, directo y emocional, destacando las características más
             st.text_area("✍️ Anuncio generado:", value=anuncio, height=300)
         
         except Exception as e:
-            st.error(f"❌ Ocurrió un error: {e}")   ////
+            st.error(f"❌ Ocurrió un error: {e}")   
