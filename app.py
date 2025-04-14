@@ -155,6 +155,22 @@ destino = st.radio(
 if st.button("📝 Generar anuncio"):
     with st.spinner("Generando anuncio..."):
         try:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",  # Usar GPT-3.5-turbo
+                messages=[  # Aquí se usa el formato correcto para el modelo de chat
+                    {"role": "system", "content": "Eres un asistente de IA que ayuda a redactar anuncios inmobiliarios."},
+                    {"role": "user", "content": mensaje_usuario}  # El mensaje del usuario con los datos del inmueble
+                ],
+                max_tokens=500,
+                temperature=0.7,
+            )
+            # Obtener la respuesta del anuncio generado
+            anuncio = response['choices'][0]['message']['content'].strip()
+            # Mostrar el anuncio generado
+            st.success("✅ Anuncio generado con éxito")
+            st.text_area("✍️ Anuncio generado:", value=anuncio, height=200)
+        except openai.error.OpenAIError as e:
+            st.error(f"❌ Error al generar el anuncio: {e}")
             # Preparar mensaje para la IA según el destino
             if destino == "Portales inmobiliarios (Idealista, Fotocasa, Milanuncios)":
                 mensaje_usuario = f"""
