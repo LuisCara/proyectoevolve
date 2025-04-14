@@ -152,6 +152,52 @@ destino = st.radio(
     "¿Dónde quieres publicar el anuncio?",
     ("Portales inmobiliarios (Idealista, Fotocasa, Milanuncios)", "Redes sociales (Facebook, Instagram)")
 )
+# Función para generar el anuncio optimizado usando GPT-3.5 Turbo
+def generar_anuncio(datos):
+    prompt = f"""
+    Genera un anuncio optimizado para una propiedad inmobiliaria con las siguientes características:
+    Tipo: {datos['tipo']}
+    Estado: {datos['estado']}
+    Metros cuadrados construidos: {datos['m2']} m²
+    Metros cuadrados útiles: {datos['m2_utiles']} m²
+    Metros cuadrados de terreno: {datos['m2_terreno']} m²
+    Habitaciones: {datos['habitaciones']}
+    Baños: {datos['baños']}
+    Fachada: {datos['fachada']}
+    Ascensor: {datos['ascensor']}
+    Certificación energética: {datos['certificado']}
+    Orientación: {datos['orientacion']}
+    Tipo de suelo interior: {datos['suelo_interior']}
+    Tipo de suelo exterior: {datos['suelo_exterior']}
+    Extras vivienda: {", ".join(datos['extras_vivienda'])}
+    Extras edificio: {", ".join(datos['extras_edificio'])}
+    Dirección del inmueble: {datos['ubicacion']}
+    Servicios cercanos: {", ".join(datos['servicios_cercanos']) if datos['servicios_cercanos'] else "Ninguno"}
+    Precio: {datos['precio']} €
+    Gastos de comunidad: {datos['gastos']} €/mes
+    Situación excepcional: {datos['situacion']}
+    Información adicional: {datos['informacion_adicional']}
 
-# Botón para generar el anuncio
-# Preparar el mensaje para la IA según el destino
+    El anuncio debe ser atractivo y persuasivo para portales inmobiliarios y redes sociales, dependiendo de la selección del destino del anuncio ({datos['destino']}).
+    """
+    
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Eres un asistente experto en redacción de anuncios inmobiliarios."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=500,
+        temperature=0.7
+    )
+    
+    return response['choices'][0]['message']['content'].strip()
+
+# Mostrar el botón para generar el anuncio
+if st.button("Generar anuncio optimizado"):
+    datos = recopilar_datos()
+    anuncio = generar_anuncio(datos)
+    
+    st.subheader("📄 Anuncio optimizado generado:")
+    st.write(anuncio)
+
