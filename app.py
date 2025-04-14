@@ -177,11 +177,11 @@ Datos del inmueble:
 Extras:
 - Piscina: {"Sí" if "Piscina" in extras_edificio else "No"}
 - Terraza: {"Sí" if "Terraza" in extras_vivienda else "No"}
-- Patio: {"No"}  # Default value as no input is provided for patio
-- Cercanía al mar: {"No"}  # Default value as no input is provided for proximity to the sea
-- Zonas comerciales cercanas: {"No"}  # Default value as no input is provided for commercial zones
-- Colegios cercanos: {"No"}  # Default value as no input is provided for nearby schools
-- Tiendas y restaurantes cercanos: {"No"}  # Default value as no input is provided for nearby shops/restaurants
+- Patio: {"No"}  # Valor por defecto ya que no se proporciona entrada para patio
+- Cercanía al mar: {"No"}  # Valor por defecto ya que no se proporciona entrada para cercanía al mar
+- Zonas comerciales cercanas: {"No"}  # Valor por defecto ya que no se proporciona entrada para zonas comerciales
+- Colegios cercanos: {"No"}  # Valor por defecto ya que no se proporciona entrada para colegios cercanos
+- Tiendas y restaurantes cercanos: {"No"}  # Valor por defecto ya que no se proporciona entrada para tiendas/restaurantes cercanos
 
 Por favor, destaca todos estos aspectos, especialmente la piscina, la terraza, la cercanía al mar y las zonas comerciales cercanas. Crea un anuncio largo, detallado y persuasivo, resalta los beneficios emocionales de vivir en esta propiedad (luz, vistas, tranquilidad, ubicación) y termina con una llamada a la acción clara, enfocada en atraer al comprador ideal para esta propiedad.
 """
@@ -202,16 +202,16 @@ Datos del inmueble:
 Extras clave a destacar para este anuncio:
 - Piscina: {"Sí" if "Piscina" in extras_edificio else "No"}
 - Terraza: {"Sí" if "Terraza" in extras_vivienda else "No"}
-- Cercanía al mar: {"No"}  # Default value as no input is provided for proximity to the sea
-- Zonas comerciales cercanas: {"No"}  # Default value as no input is provided for commercial zones
+- Cercanía al mar: {"No"}  # Valor por defecto ya que no se proporciona entrada para cercanía al mar
+- Zonas comerciales cercanas: {"No"}  # Valor por defecto ya que no se proporciona entrada para zonas comerciales
 
 Crea un anuncio breve, directo y emocional, destacando las características más atractivas de la propiedad, como la piscina, la terraza y la cercanía al mar. Usa frases cortas, imágenes visuales y una llamada a la acción clara, invitando a los usuarios a visitar la propiedad.
 """
 
-            # Llamada a OpenAI usando el endpoint adecuado (v1/chat/completions)
+            # Llamada a OpenAI usando la API moderna para GPT-3.5-turbo
             response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",  # O el modelo que tengas disponible
-                messages=[ 
+                model="gpt-3.5-turbo",  # Usar GPT-3.5-turbo
+                messages=[
                     {
                         "role": "system",
                         "content": (
@@ -228,9 +228,9 @@ Crea un anuncio breve, directo y emocional, destacando las características más
                 ]
             )
 
-            anuncio = response['choices'][0]['message']['content']
+            anuncio = response['choices'][0]['message']['content'].strip()
             st.success("✅ Anuncio generado con éxito")
             st.text_area("✍️ Anuncio generado:", value=anuncio, height=200)
-        
+
         except Exception as e:
-            st.error(f"❌ Ocurrió un error: {e}") 
+            st.error(f"❌ Ocurrió un error: {e}")
