@@ -141,28 +141,83 @@ destino = st.radio(
 # Botón para generar el anuncio
 if st.button("📝 Generar anuncio"):
     with st.spinner("Generando anuncio..."):
-        # Llamada a la API de OpenAI para generar el anuncio
-        prompt = f"""
-        Crea un anuncio profesional y persuasivo para un inmueble que tiene las siguientes características:
-        Tipo: {tipo}, Estado: {estado}, Superficie: {m2} m², Superficie útil: {m2_utiles} m², Habitaciones: {habitaciones}, Baños: {baños}, Fachada: {fachada}, Ascensor: {ascensor}, Calificación energética: {certificado}, Orientación: {orientacion}.
-        Extras: {', '.join(extras_vivienda)}. Características del edificio: {', '.join(extras_edificio)}.
-        Localización: {ubicacion}. Servicios cercanos: {descripcion_servicios}.
-        {descripcion_cercania}
-        Genera un texto convincente y persuasivo que atraiga a los compradores y arrendadores interesados. Incluye un llamado a la acción al final.
-        """
+        try:
+            # Preparar mensaje para la IA según el destino
+            if destino == "Portales inmobiliarios (Idealista, Fotocasa, Milanuncios)":
+                mensaje_usuario = f"""
+Redacta un anuncio inmobiliario profesional, emocional y altamente persuasivo para publicar en Idealista, Fotocasa, Milanuncios y otros portales inmobiliarios.
+
+Datos del inmueble:
+- Tipo de propiedad: {tipo}
+- Estado: {estado}
+- Superficie: {m2} m²
+- Habitaciones: {habitaciones}
+- Baños: {baños}
+- Fachada: {fachada}
+- Ascensor: {ascensor}
+- Certificación energética: {certificado}
+- Orientación: {orientacion}
+- Precio: {precio} €
+- Gastos de comunidad: {gastos} €/mes
+- Situación legal: {situacion}
+
+Extras:
+- Piscina: {"Sí" if "Piscina" in extras_edificio else "No"}
+- Terraza: {"Sí" if "Terraza" in extras_vivienda else "No"}
+- Patio: {"No"}  # Default value as no input is provided for patio
+- Cercanía al mar: {"No"}  # Default value as no input is provided for proximity to the sea
+- Zonas comerciales cercanas: {"No"}  # Default value as no input is provided for commercial zones
+- Colegios cercanos: {"No"}  # Default value as no input is provided for nearby schools
+- Tiendas y restaurantes cercanos: {"No"}  # Default value as no input is provided for nearby shops/restaurants
+
+Por favor, destaca todos estos aspectos, especialmente la piscina, la terraza, la cercanía al mar y las zonas comerciales cercanas. Crea un anuncio largo, detallado y persuasivo, resalta los beneficios emocionales de vivir en esta propiedad (luz, vistas, tranquilidad, ubicación) y termina con una llamada a la acción clara, enfocada en atraer al comprador ideal para esta propiedad.
+"""
+
+            elif destino == "Redes sociales (Facebook, Instagram)":
+                mensaje_usuario = f"""
+Redacta un anuncio inmobiliario atractivo y persuasivo, adecuado para publicar en redes sociales como Facebook e Instagram. El anuncio debe ser corto, visualmente impactante y emocionalmente atractivo.
+
+Datos del inmueble:
+- Tipo de propiedad: {tipo}
+- Estado: {estado}
+- Superficie: {m2} m²
+- Habitaciones: {habitaciones}
+- Baños: {baños}
+- Precio: {precio} €
+- Extras destacados: {', '.join(extras_vivienda) if extras_vivienda else 'Ninguno'}
+
+Extras clave a destacar para este anuncio:
+- Piscina: {"Sí" if "Piscina" in extras_edificio else "No"}
+- Terraza: {"Sí" if "Terraza" in extras_vivienda else "No"}
+- Cercanía al mar: {"No"}  # Default value as no input is provided for proximity to the sea
+- Zonas comerciales cercanas: {"No"}  # Default value as no input is provided for commercial zones
+
+Crea un anuncio breve, directo y emocional, destacando las características más atractivas de la propiedad, como la piscina, la terraza y la cercanía al mar. Usa frases cortas, imágenes visuales y una llamada a la acción clara, invitando a los usuarios a visitar la propiedad.
+"""
+
+            # Llamada a OpenAI usando el endpoint adecuado (v1/chat/completions)
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",  # O el modelo que tengas disponible
+                messages=[ 
+                    {
+                        "role": "system",
+                        "content": (
+                            "Eres el mayor experto en anuncios inmobiliarios, especializado en marketing emocional y persuasivo. "
+                            "Debes crear anuncios que resalten los aspectos más atractivos de las propiedades, como piscina, terraza, cercanía al mar, "
+                            "zonas comerciales cercanas, y la calidad de vida en la zona. Utiliza un tono atractivo y emocionante para captar la atención de los compradores, que no sean demasiado largos, pero que sean informativos y persuasivos. "
+                            "Recuerda que el objetivo es atraer al comprador ideal para esta propiedad."
+                        )
+                    },
+                    {
+                        "role": "user",
+                        "content": mensaje_usuario
+                    }
+                ]
+            )
+
+            anuncio = response['choices'][0]['message']['content']
+            st.success("✅ Anuncio generado con éxito")
+            st.text_area("✍️ Anuncio generado:", value=anuncio, height=300)
         
-        # Cambio en la llamada a la API de OpenAI (utilizando ChatCompletion)
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # O "gpt-4" si tienes acceso
-            messages=[
-                {"role": "system", "content": "Eres un asistente de anuncios inmobiliarios."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=300,
-            temperature=0.7,
-        )
-        
-        # La respuesta de la API
-        anuncio_generado = response['choices'][0]['message']['content'].strip()
-        
-        st.write("🌟 **Anuncio generado**:")
+        except Exception as e:
+            st.error(f"❌ Ocurrió un error: {e}")   ////
