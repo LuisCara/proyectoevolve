@@ -47,7 +47,7 @@ suelo_interior = st.selectbox("Tipo de suelo en el interior", [
     "Parquet", "Tarima flotante", "Baldosa cerámica", "Mármol", "Granito", "Vinílico", "Moqueta", "Cemento pulido", "Laminado", "Corcho"
 ])
 suelo_exterior = st.selectbox("Tipo de suelo en el exterior", [
-    "Grava", "Pavimento de adoquín", "Hormigón", "Terracota", "Decking de madera", "Piedra natural", "Césped artificial", "Pavimento permeable"
+    "Ninguno","Grava", "Pavimento de adoquín", "Hormigón", "Terracota", "Decking de madera", "Piedra natural", "Césped artificial", "Pavimento permeable"
 ])
 
 # Características adicionales
@@ -139,9 +139,10 @@ if uploaded_files:
     for uploaded_file in uploaded_files:
         if uploaded_file.type in ["image/jpeg", "image/png"]:
             image = Image.open(uploaded_file)
-            st.image(image, caption=uploaded_file.name, use_column_width=True)
+            st.image(image, caption=uploaded_file.name, use_container_width=True)
         else:
             st.write(f"Archivo {uploaded_file.name} cargado correctamente.")
+
 
 # Añadir una sección para que el usuario seleccione el destino del anuncio
 st.subheader("📣 Selecciona el destino del anuncio")
@@ -229,7 +230,7 @@ Crea un anuncio breve, directo y emocional, destacando las características más
 
             anuncio = response['choices'][0]['message']['content']
             st.success("✅ Anuncio generado con éxito")
-            st.text_area("✍️ Anuncio generado:", value=anuncio, height=300)
+            st.text_area("✍️ Anuncio generado:", value=anuncio, height=200)
         
         except Exception as e:
             st.error(f"❌ Ocurrió un error: {e}") 
