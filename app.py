@@ -3,7 +3,7 @@ import openai
 import os
 from dotenv import load_dotenv
 from PIL import Image
-from openai.error import OpenAIError
+
 
 
 # Cargar las variables de entorno desde .env
@@ -155,63 +155,3 @@ destino = st.radio(
 
 # Botón para generar el anuncio
 # Preparar el mensaje para la IA según el destino
-import openai
-from openai.error import OpenAIError  # Asegúrate de importar OpenAIError
-
-# Configura la clave API de OpenAI
-openai.api_key = 'your-api-key-here'
-
-try:
-    # Preparar el mensaje para la IA según el destino
-    if destino == "Portales inmobiliarios (Idealista, Fotocasa, Milanuncios)":
-        mensaje_usuario = f"""
-        Redacta un anuncio inmobiliario profesional, emocional y altamente persuasivo para publicar en Idealista, Fotocasa, Milanuncios y otros portales inmobiliarios.
-
-        Datos del inmueble:
-        - Tipo de propiedad: {tipo}
-        - Estado: {estado}
-        - Superficie: {m2} m²
-        - Habitaciones: {habitaciones}
-        - Baños: {baños}
-        - Fachada: {fachada}
-        - Ascensor: {ascensor}
-        - Certificación energética: {certificado}
-        - Orientación: {orientacion}
-        - Precio: {precio} €
-        - Gastos de comunidad: {gastos} €/mes
-        - Situación legal: {situacion}
-
-        Extras:
-        - Piscina: {"Sí" if "Piscina" in extras_edificio else "No"}
-        - Terraza: {"Sí" if "Terraza" in extras_vivienda else "No"}
-        - Patio: {"No"}  # Valor por defecto ya que no se proporciona entrada para patio
-        - Cercanía al mar: {"No"}  # Valor por defecto ya que no se proporciona entrada para cercanía al mar
-        - Zonas comerciales cercanas: {"No"}  # Valor por defecto ya que no se proporciona entrada para zonas comerciales
-        - Colegios cercanos: {"No"}  # Valor por defecto ya que no se proporciona entrada para colegios cercanos
-        - Tiendas y restaurantes cercanos: {"No"}  # Valor por defecto ya que no se proporciona entrada para tiendas/restaurantes cercanos
-
-        Por favor, destaca todos estos aspectos, especialmente la piscina, la terraza, la cercanía al mar y las zonas comerciales cercanas. Crea un anuncio largo, detallado y persuasivo, resalta los beneficios emocionales de vivir en esta propiedad (luz, vistas, tranquilidad, ubicación) y termina con una llamada a la acción clara, enfocada en atraer al comprador ideal para esta propiedad.
-        """
-
-    # Usar la nueva API de OpenAI
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",  # Usar GPT-3.5-turbo
-        messages=[  # Aquí se usa el formato correcto para el modelo de chat
-            {"role": "system", "content": "Eres un asistente de IA que ayuda a redactar anuncios inmobiliarios."},
-            {"role": "user", "content": mensaje_usuario}  # El mensaje del usuario con los datos del inmueble
-        ],
-        max_tokens=500,
-        temperature=0.7,
-    )
-
-    # Obtener la respuesta del anuncio generado
-    anuncio = response['choices'][0]['message']['content'].strip()
-    # Mostrar el anuncio generado
-    st.success("✅ Anuncio generado con éxito")
-    st.text_area("✍️ Anuncio generado:", value=anuncio, height=200)
-
-except OpenAIError as e:  # Aquí capturas el error específico de OpenAI
-    st.error(f"❌ Error al generar el anuncio de OpenAI: {e}")
-
-except Exception as e:  # Captura cualquier otro error general
-    st.error(f"❌ Error inesperado: {e}")
