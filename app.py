@@ -152,52 +152,80 @@ destino = st.radio(
     "¿Dónde quieres publicar el anuncio?",
     ("Portales inmobiliarios (Idealista, Fotocasa, Milanuncios)", "Redes sociales (Facebook, Instagram)")
 )
-# Función para generar el anuncio optimizado usando GPT-3.5 Turbo
+
+# Función para recopilar los datos del formulario
+def recopilar_datos():
+    return {
+        "tipo": tipo,
+        "estado": estado,
+        "m2": m2,
+        "m2_utiles": m2_utiles,
+        "m2_terreno": m2_terreno,
+        "habitaciones": habitaciones,
+        "baños": baños,
+        "fachada": fachada,
+        "ascensor": ascensor,
+        "certificado": certificado,
+        "orientacion": orientacion,
+        "suelo_interior": suelo_interior,
+        "suelo_exterior": suelo_exterior,
+        "extras_vivienda": extras_vivienda,
+        "extras_edificio": extras_edificio,
+        "metros_terraza": metros_terraza,
+        "metros_balcon": metros_balcon,
+        "metros_trastero": metros_trastero,
+        "metros_garaje": metros_garaje,
+        "ubicacion": ubicacion,
+        "servicios_cercanos": servicios_cercanos,
+        "descripcion_servicios": descripcion_servicios,
+        "descripcion_cercania": descripcion_cercania,
+        "precio": precio,
+        "gastos": gastos,
+        "situacion": situacion,
+        "informacion_adicional": informacion_adicional,
+        "destino": destino
+    }
+
+# Función para generar el anuncio con OpenAI
 def generar_anuncio(datos):
     prompt = f"""
-    Genera un anuncio optimizado para una propiedad inmobiliaria con las siguientes características:
-    Tipo: {datos['tipo']}
-    Estado: {datos['estado']}
-    Metros cuadrados construidos: {datos['m2']} m²
-    Metros cuadrados útiles: {datos['m2_utiles']} m²
-    Metros cuadrados de terreno: {datos['m2_terreno']} m²
-    Habitaciones: {datos['habitaciones']}
-    Baños: {datos['baños']}
-    Fachada: {datos['fachada']}
-    Ascensor: {datos['ascensor']}
-    Certificación energética: {datos['certificado']}
-    Orientación: {datos['orientacion']}
-    Tipo de suelo interior: {datos['suelo_interior']}
-    Tipo de suelo exterior: {datos['suelo_exterior']}
-    Extras vivienda: {", ".join(datos['extras_vivienda'])}
-    Extras edificio: {", ".join(datos['extras_edificio'])}
-    Dirección del inmueble: {datos['ubicacion']}
-    Servicios cercanos: {", ".join(datos['servicios_cercanos']) if datos['servicios_cercanos'] else "Ninguno"}
-    Precio: {datos['precio']} €
-    Gastos de comunidad: {datos['gastos']} €/mes
-    Situación excepcional: {datos['situacion']}
-    Información adicional: {datos['informacion_adicional']}
+Eres un experto copywriter especializado en redactar anuncios inmobiliarios persuasivos y profesionales. 
+Crea un anuncio de alto nivel para una propiedad con las siguientes características:
 
-    El anuncio debe ser atractivo y persuasivo para portales inmobiliarios y redes sociales, dependiendo de la selección del destino del anuncio ({datos['destino']}).
-    """
-    
+🏡 Tipo de propiedad: {datos['tipo']}
+📍 Ubicación: {datos['ubicacion']}
+📐 Superficie: {datos['m2']} m² construidos, {datos['m2_utiles']} m² útiles, {datos['m2_terreno']} m² de terreno
+🛏 Habitaciones: {datos['habitaciones']}, 🛁 Baños: {datos['baños']}
+🌞 Fachada: {datos['fachada']} | Orientación: {datos['orientacion']}
+📈 Estado: {datos['estado']}, Certificado energético: {datos['certificado']}
+🏗 Suelo interior: {datos['suelo_interior']}, exterior: {datos['suelo_exterior']}
+✨ Extras vivienda: {', '.join(datos['extras_vivienda']) if datos['extras_vivienda'] else 'Ninguno'}
+🏢 Extras edificio: {', '.join(datos['extras_edificio']) if datos['extras_edificio'] else 'Ninguno'}
+📸 Terraza: {datos['metros_terraza']} m², Balcón: {datos['metros_balcon']} m², Trastero: {datos['metros_trastero']} m², Garaje: {datos['metros_garaje']} m²
+🗺 Servicios cercanos: {datos['descripcion_servicios']}
+🌊/🏞 Otros: {datos['descripcion_cercania']}
+💶 Precio: {datos['precio']} € | Gastos comunidad: {datos['gastos']} €
+⚠ Situación: {datos['situacion']}
+📝 Información adicional: {datos['informacion_adicional']}
+📣 Destino del anuncio: {datos['destino']}
+
+El texto debe ser atractivo, persuasivo, sin repetir datos de forma robótica. Usa frases emotivas, beneficios para el comprador y estilo comercial. Añade emojis si es para redes sociales.
+"""
+
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "Eres un asistente experto en redacción de anuncios inmobiliarios."},
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=500,
-        temperature=0.7
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.7,
+        max_tokens=1000
     )
-    
-    return response['choices'][0]['message']['content'].strip()
 
-# Mostrar el botón para generar el anuncio
-if st.button("Generar anuncio optimizado"):
+    return response.choices[0].message["content"]
+
+# Botón para generar el anuncio
+st.subheader("🧠 Generador de anuncio con IA")
+if st.button("✨ Generar anuncio optimizado"):
     datos = recopilar_datos()
     anuncio = generar_anuncio(datos)
-    
-    st.subheader("📄 Anuncio optimizado generado:")
-    st.write(anuncio)
+    st.success("✅ Anuncio generado con éxito:")
+    st.text_area("📝 Anuncio generado", value=anuncio, height=300)
 
