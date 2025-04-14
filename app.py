@@ -4,8 +4,6 @@ import os
 from dotenv import load_dotenv
 from PIL import Image
 
-
-
 # Cargar las variables de entorno desde .env
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -14,21 +12,20 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 st.set_page_config(page_title="AnuncioProAI", page_icon="🏡", layout="centered")
 
 # Título en una sola línea
-col1, col2 = st.columns([1, 5])  # Crear dos columnas
+col1, col2 = st.columns([1, 5])
 with col1:
-    st.image("yo.jpg", width=500)  # Ajusta la ruta y el tamaño de la imagen
+    st.image("yo.jpg", width=500)
 with col2:
     st.markdown("<h1 style='text-align: center;'>🏡 AnuncioProAI: Creador de anuncios inmobiliarios</h1>", unsafe_allow_html=True)
-
 
 # Sección de datos del inmueble
 st.subheader("📋 Características del inmueble")
 tipo = st.selectbox("Tipo de propiedad", [
-    "Piso", "Ático", "Dúplex", "Estudio / loft", "Casa", "Chalet", "Adosado", 
-    "Bungalow", "Piso de protección oficial (VPO)", "Finca/Rural","Cortijo", "Local comercial", 
+    "Piso", "Ático", "Dúplex", "Estudio / loft", "Casa", "Chalet", "Adosado",
+    "Bungalow", "Piso de protección oficial (VPO)", "Finca/Rural", "Cortijo", "Local comercial",
     "Oficina", "Nave industrial", "Terreno", "Mansión"
 ])
-estado = st.selectbox("Estado", ["A demoler","A reformar", "Buen estado", "Como nuevo", "Nuevo"])
+estado = st.selectbox("Estado", ["A demoler", "A reformar", "Buen estado", "Como nuevo", "Nuevo"])
 m2 = st.number_input("m² construidos", min_value=10, max_value=30000)
 m2_utiles = st.number_input("m² útiles", min_value=10, max_value=30000)
 m2_terreno = st.number_input("m² de terreno", min_value=0, max_value=30000)
@@ -38,8 +35,8 @@ fachada = st.radio("Fachada", ["Exterior", "Interior"])
 ascensor = st.radio("¿Tiene ascensor?", ["Sí tiene", "No tiene"])
 certificado = st.selectbox("Calificación energética", ["A", "B", "C", "D", "E", "F", "G"])
 orientacion = st.selectbox("Orientación", [
-    "Norte", "Sur", "Este", "Oeste", 
-    "Noreste", "Noroeste", 
+    "Norte", "Sur", "Este", "Oeste",
+    "Noreste", "Noroeste",
     "Sureste", "Suroeste"
 ])
 
@@ -49,7 +46,7 @@ suelo_interior = st.selectbox("Tipo de suelo en el interior", [
     "Parquet", "Tarima flotante", "Baldosa cerámica", "Mármol", "Granito", "Vinílico", "Moqueta", "Cemento pulido", "Laminado", "Corcho"
 ])
 suelo_exterior = st.selectbox("Tipo de suelo en el exterior", [
-    "Ninguno","Grava", "Pavimento de adoquín", "Hormigón", "Terracota", "Decking de madera", "Piedra natural", "Césped artificial", "Pavimento permeable"
+    "Ninguno", "Grava", "Pavimento de adoquín", "Hormigón", "Terracota", "Decking de madera", "Piedra natural", "Césped artificial", "Pavimento permeable"
 ])
 
 # Características adicionales
@@ -58,7 +55,6 @@ extras_vivienda = st.multiselect("Características de la vivienda", [
     "Amueblado", "Armarios empotrados", "Aire acondicionado", "Terraza", "Balcón", "Trastero", "Plaza de garaje"])
 extras_edificio = st.multiselect("Características del edificio", ["Piscina", "Zona verde"])
 
-# Solicitar metros cuadrados si se seleccionan terraza, balcón, trastero o plaza de garaje
 metros_terraza = 0
 metros_balcon = 0
 metros_trastero = 0
@@ -73,23 +69,18 @@ if "Trastero" in extras_vivienda:
 if "Plaza de garaje" in extras_vivienda:
     metros_garaje = st.number_input("Metros cuadrados de la plaza de garaje", min_value=1, max_value=1000)
 
-# Localización del inmueble y descripción de los servicios cercanos
+# Localización del inmueble y servicios cercanos
 st.subheader("📍 Localización y servicios cercanos")
-
-# Inputs para la localización del inmueble
 ubicacion = st.text_input("📍 Dirección del inmueble", "Introduce la dirección del inmueble aquí")
 
-# Inputs para los servicios cercanos
 servicios_cercanos = st.multiselect(
-    "Selecciona los servicios cercanos", 
+    "Selecciona los servicios cercanos",
     ["Centro médico", "Colegios", "Centros comerciales", "Transporte público", "Parques", "Tiendas y restaurantes", "Gimnasios", "Farmacias", "Estaciones de tren", "Aeropuerto"]
 )
 
-# Selección si está cerca de la playa o montaña
 cerca_playa = st.checkbox("Cerca de la playa")
 cerca_montana = st.checkbox("Cerca de la montaña")
 
-# Distancia a la playa o montaña (solo si se ha seleccionado una de las dos opciones)
 distancia_playa = None
 distancia_montana = None
 if cerca_playa:
@@ -97,26 +88,22 @@ if cerca_playa:
 if cerca_montana:
     distancia_montana = st.number_input("¿A qué distancia está la montaña (en metros)?", min_value=0, step=10)
 
-# Descripción de los servicios cercanos
 descripcion_servicios = "Estos son los servicios cercanos a la propiedad: "
 if servicios_cercanos:
     descripcion_servicios += ", ".join(servicios_cercanos)
 else:
     descripcion_servicios = "No se han seleccionado servicios cercanos."
 
-# Descripción de la cercanía a la playa o montaña
 descripcion_cercania = ""
 if cerca_playa:
     descripcion_cercania = f"Está a {distancia_playa} metros de la playa."
 elif cerca_montana:
     descripcion_cercania = f"Está a {distancia_montana} metros de la montaña."
 
-# Mostrar la información recopilada
 st.write(f"🔑 **Dirección**: {ubicacion}")
 st.write(f"🏙 **Servicios cercanos**: {descripcion_servicios}")
 if descripcion_cercania:
     st.write(f"🌊/🏞 **Cercanía**: {descripcion_cercania}")
-
 
 # Precio y situación legal
 st.subheader("💶 Precio y situación")
@@ -125,17 +112,16 @@ gastos = st.number_input("Gastos de comunidad (€ / mes)", min_value=0)
 situacion = st.selectbox("¿Situación excepcional?", [
     "No, en ninguna situación excepcional", "Ocupada ilegalmente", "Alquilada, con inquilinos", "Nuda propiedad"])
 
-# preguntar al usuario si quiere añadir alguna informacion adicional de la propiedad que sea relevante
+# Información adicional
 st.subheader("📝 Información adicional")
 informacion_adicional = st.text_area("¿Hay algo más que quieras añadir sobre la propiedad?")
 if informacion_adicional:
     st.write("Información adicional:", informacion_adicional)
 
-# **Nuevo**: Cargar imágenes o planos
+# Imágenes o planos
 st.subheader("📸 Añadir imágenes o planos del inmueble")
 uploaded_files = st.file_uploader("Sube fotos o planos", type=["jpg", "jpeg", "png", "pdf"], accept_multiple_files=True)
 
-# Si se suben archivos, mostrar las imágenes
 if uploaded_files:
     st.write("Archivos subidos:")
     for uploaded_file in uploaded_files:
@@ -145,15 +131,14 @@ if uploaded_files:
         else:
             st.write(f"Archivo {uploaded_file.name} cargado correctamente.")
 
-
-# Añadir una sección para que el usuario seleccione el destino del anuncio
+# Destino del anuncio
 st.subheader("📣 Selecciona el destino del anuncio")
 destino = st.radio(
     "¿Dónde quieres publicar el anuncio?",
     ("Portales inmobiliarios (Idealista, Fotocasa, Milanuncios)", "Redes sociales (Facebook, Instagram)")
 )
 
-# Función para recopilar los datos del formulario
+# Función para recopilar datos
 def recopilar_datos():
     return {
         "tipo": tipo,
@@ -186,7 +171,7 @@ def recopilar_datos():
         "destino": destino
     }
 
-# Función para generar el anuncio con OpenAI
+# Función para generar el anuncio con la nueva API de OpenAI
 def generar_anuncio(datos):
     prompt = f"""
 Eres un experto copywriter especializado en redactar anuncios inmobiliarios persuasivos y profesionales. 
@@ -212,14 +197,14 @@ Crea un anuncio de alto nivel para una propiedad con las siguientes característ
 El texto debe ser atractivo, persuasivo, sin repetir datos de forma robótica. Usa frases emotivas, beneficios para el comprador y estilo comercial. Añade emojis si es para redes sociales.
 """
 
-    response = openai.ChatCompletion.create(
+    response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
         max_tokens=1000
     )
 
-    return response.choices[0].message["content"]
+    return response.choices[0].message.content
 
 # Botón para generar el anuncio
 st.subheader("🧠 Generador de anuncio con IA")
@@ -228,4 +213,3 @@ if st.button("✨ Generar anuncio optimizado"):
     anuncio = generar_anuncio(datos)
     st.success("✅ Anuncio generado con éxito:")
     st.text_area("📝 Anuncio generado", value=anuncio, height=300)
-
