@@ -3,6 +3,11 @@ import openai
 import os
 from dotenv import load_dotenv
 from PIL import Image
+import ssl 
+import certifi
+
+# Fuerza a usar certificados válidos
+os.environ['SSL_CERT_FILE'] = certifi.where()
 
 # Cargar las variables de entorno desde .env
 load_dotenv()
