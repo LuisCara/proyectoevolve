@@ -18,7 +18,6 @@ with col1:
 with col2:
     st.markdown("<h1 style='text-align: center;'>🏡 AnuncioProAI: Creador de anuncios inmobiliarios</h1>", unsafe_allow_html=True)
 
-
 # Sección de datos del inmueble
 st.subheader("📋 Características del inmueble")
 tipo = st.selectbox("Tipo de propiedad", [
@@ -40,6 +39,11 @@ orientacion = st.selectbox("Orientación", [
     "Noreste", "Noroeste", 
     "Sureste", "Suroeste"
 ])
+
+# Validaciones básicas
+if m2 <= 0 or m2_utiles <= 0:
+    st.error("La superficie construida y útil deben ser mayores a 0.")
+    st.stop()
 
 # Selección de tipos de suelo
 st.subheader("🪵 Tipos de suelo")
@@ -71,18 +75,47 @@ if "Trastero" in extras_vivienda:
 if "Plaza de garaje" in extras_vivienda:
     metros_garaje = st.number_input("Metros cuadrados de la plaza de garaje", min_value=1, max_value=1000)
 
-# Precio y situación legal
-st.subheader("💶 Precio y situación")
-precio = st.number_input("Precio del inmueble (€)", min_value=0)
-gastos = st.number_input("Gastos de comunidad (€ / mes)", min_value=0)
-situacion = st.selectbox("¿Situación excepcional?", [
-    "No, en ninguna situación excepcional", "Ocupada ilegalmente", "Alquilada, con inquilinos", "Nuda propiedad"])
+# Localización del inmueble y descripción de los servicios cercanos
+st.subheader("📍 Localización y servicios cercanos")
+ubicacion = st.text_input("📍 Dirección del inmueble", "Introduce la dirección del inmueble aquí")
 
-# preguntar al usuario si quiere añadir alguna informacion adicional de la propiedad que sea relevante
-st.subheader("📝 Información adicional")
-informacion_adicional = st.text_area("¿Hay algo más que quieras añadir sobre la propiedad?")
-if informacion_adicional:
-    st.write("Información adicional:", informacion_adicional)
+# Inputs para los servicios cercanos
+servicios_cercanos = st.multiselect(
+    "Selecciona los servicios cercanos", 
+    ["Centro médico", "Colegios", "Centros comerciales", "Transporte público", "Parques", "Tiendas y restaurantes", "Gimnasios", "Farmacias", "Estaciones de tren", "Aeropuerto"]
+)
+
+# Selección si está cerca de la playa o montaña
+cerca_playa = st.checkbox("Cerca de la playa")
+cerca_montana = st.checkbox("Cerca de la montaña")
+
+# Distancia a la playa o montaña (solo si se ha seleccionado una de las dos opciones)
+distancia_playa = None
+distancia_montana = None
+if cerca_playa:
+    distancia_playa = st.number_input("¿A qué distancia está la playa (en metros)?", min_value=0, step=10)
+if cerca_montana:
+    distancia_montana = st.number_input("¿A qué distancia está la montaña (en metros)?", min_value=0, step=10)
+
+# Descripción de los servicios cercanos
+descripcion_servicios = "Estos son los servicios cercanos a la propiedad: "
+if servicios_cercanos:
+    descripcion_servicios += ", ".join(servicios_cercanos)
+else:
+    descripcion_servicios = "No se han seleccionado servicios cercanos."
+
+# Descripción de la cercanía a la playa o montaña
+descripcion_cercania = ""
+if cerca_playa:
+    descripcion_cercania = f"Está a {distancia_playa} metros de la playa."
+elif cerca_montana:
+    descripcion_cercania = f"Está a {distancia_montana} metros de la montaña."
+
+# Mostrar la información recopilada
+st.write(f"🔑 **Dirección**: {ubicacion}")
+st.write(f"🏙 **Servicios cercanos**: {descripcion_servicios}")
+if descripcion_cercania:
+    st.write(f"🌊/🏞 **Cercanía**: {descripcion_cercania}")
 
 # **Nuevo**: Cargar imágenes o planos
 st.subheader("📸 Añadir imágenes o planos del inmueble")
@@ -108,68 +141,25 @@ destino = st.radio(
 # Botón para generar el anuncio
 if st.button("📝 Generar anuncio"):
     with st.spinner("Generando anuncio..."):
-        try:
-            # Preparar mensaje para la IA según el destino
-            if destino == "Portales inmobiliarios (Idealista, Fotocasa, Milanuncios)":
-                mensaje_usuario = f"""
-Redacta un anuncio inmobiliario profesional, emocional y altamente persuasivo para publicar en Idealista, Fotocasa, Milanuncios y otros portales inmobiliarios.
-
-Datos del inmueble:
-- Tipo de propiedad: {tipo}
-- Estado: {estado}
-- Superficie: {m2} m²
-- Habitaciones: {habitaciones}
-- Baños: {baños}
-- Fachada: {fachada}
-- Ascensor: {ascensor}
-- Certificación energética: {certificado}
-- Orientación: {orientacion}
-- Extras de la vivienda: {', '.join(extras_vivienda) if extras_vivienda else 'Ninguno'}
-- Extras del edificio: {', '.join(extras_edificio) if extras_edificio else 'Ninguno'}
-- Precio: {precio} €
-- Gastos de comunidad: {gastos} €/mes
-- Situación legal: {situacion}
-
-Crea un anuncio largo, detallado y persuasivo, resalta los beneficios de vivir en esta propiedad, incluye detalles que evoquen emociones positivas (luz, vistas, tranquilidad, ubicación, etc.) y termina con una llamada a la acción clara. Hazlo atractivo para los posibles compradores en portales inmobiliarios.
-"""
-
-            elif destino == "Redes sociales (Facebook, Instagram)":
-                mensaje_usuario = f"""
-Redacta un anuncio inmobiliario atractivo y persuasivo, adecuado para publicar en redes sociales como Facebook e Instagram. El anuncio debe ser corto y visualmente impactante.
-
-Datos del inmueble:
-- Tipo de propiedad: {tipo}
-- Estado: {estado}
-- Superficie: {m2} m²
-- Habitaciones: {habitaciones}
-- Baños: {baños}
-- Precio: {precio} €
-- Extras destacados: {', '.join(extras_vivienda) if extras_vivienda else 'Ninguno'}
-
-Crea un anuncio breve, directo y emocional, destacando las características más atractivas de la propiedad. Utiliza frases cortas, imágenes visuales y una llamada a la acción clara. El anuncio debe ser conciso para captar la atención de los usuarios de redes sociales y generar interacción.
-"""
-
-            # Llamada a OpenAI usando el endpoint adecuado (v1/chat/completions)
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",  # O el modelo que tengas disponible
-                messages=[ 
-                    {
-                        "role": "system",
-                        "content": (
-                            "Eres el mejor redactor de anuncios inmobiliarios, experto en marketing emocional, técnicas de venta persuasiva "
-                            "y copywriting. Crea textos que enamoren y vendan propiedades en segundos."
-                        )
-                    },
-                    {
-                        "role": "user",
-                        "content": mensaje_usuario
-                    }
-                ]
-            )
-
-            anuncio = response['choices'][0]['message']['content']
-            st.success("✅ Anuncio generado con éxito")
-            st.text_area("✍️ Anuncio generado:", value=anuncio, height=300)
-
-        except Exception as e:
-            st.error(f"❌ Error al generar el anuncio: {e}")
+        # Llamada a la API de OpenAI para generar el anuncio
+        prompt = f"""
+        Crea un anuncio profesional y persuasivo para un inmueble que tiene las siguientes características:
+        Tipo: {tipo}, Estado: {estado}, Superficie: {m2} m², Superficie útil: {m2_utiles} m², Habitaciones: {habitaciones}, Baños: {baños}, Fachada: {fachada}, Ascensor: {ascensor}, Calificación energética: {certificado}, Orientación: {orientacion}.
+        Extras: {', '.join(extras_vivienda)}. Características del edificio: {', '.join(extras_edificio)}.
+        Localización: {ubicacion}. Servicios cercanos: {descripcion_servicios}.
+        {descripcion_cercania}
+        Genera un texto convincente y persuasivo que atraiga a los compradores y arrendadores interesados. Incluye un llamado a la acción al final.
+        """
+        
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=300,
+            n=1,
+            stop=None,
+            temperature=0.7,
+        )
+        
+        anuncio_generado = response.choices[0].text.strip()
+        st.write("🌟 **Anuncio generado**:")
+        st.write(anuncio_generado)
