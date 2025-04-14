@@ -179,7 +179,9 @@ def recopilar_datos():
 # Función para generar el anuncio con la nueva API de OpenAI
 def generar_anuncio(datos):
     prompt = f"""
-Eres un experto copywriter especializado en redactar anuncios inmobiliarios persuasivos y profesionales. 
+Eres un experto en marketing inmobiliario con experiencia en la creación de anuncios optimizados para portales inmobiliarios como Idealista, Fotocasa y Milanuncios.
+Tu tarea es generar un anuncio de venta para una propiedad inmobiliaria en el mercado español, usando un tono persuasivo, profesional y claro. El anuncio debe
+resaltar las mejores características de la propiedad y atraer tanto a compradores como a inquilinos potenciales. El objetivo es optimizar el anuncio para maximizar las visitas y consultas.
 Crea un anuncio de alto nivel para una propiedad con las siguientes características:
 
 🏡 Tipo de propiedad: {datos['tipo']}
