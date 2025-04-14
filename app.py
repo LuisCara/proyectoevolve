@@ -18,6 +18,7 @@ with col1:
 with col2:
     st.markdown("<h1 style='text-align: center;'>🏡 AnuncioProAI: Creador de anuncios inmobiliarios</h1>", unsafe_allow_html=True)
 
+
 # Sección de datos del inmueble
 st.subheader("📋 Características del inmueble")
 tipo = st.selectbox("Tipo de propiedad", [
@@ -40,18 +41,13 @@ orientacion = st.selectbox("Orientación", [
     "Sureste", "Suroeste"
 ])
 
-# Validaciones básicas
-if m2 <= 0 or m2_utiles <= 0:
-    st.error("La superficie construida y útil deben ser mayores a 0.")
-    st.stop()
-
 # Selección de tipos de suelo
 st.subheader("🪵 Tipos de suelo")
 suelo_interior = st.selectbox("Tipo de suelo en el interior", [
     "Parquet", "Tarima flotante", "Baldosa cerámica", "Mármol", "Granito", "Vinílico", "Moqueta", "Cemento pulido", "Laminado", "Corcho"
 ])
 suelo_exterior = st.selectbox("Tipo de suelo en el exterior", [
-    "Ninguno","Grava", "Pavimento de adoquín", "Hormigón", "Terracota", "Decking de madera", "Piedra natural", "Césped artificial", "Pavimento permeable"
+    "Grava", "Pavimento de adoquín", "Hormigón", "Terracota", "Decking de madera", "Piedra natural", "Césped artificial", "Pavimento permeable"
 ])
 
 # Características adicionales
@@ -77,6 +73,8 @@ if "Plaza de garaje" in extras_vivienda:
 
 # Localización del inmueble y descripción de los servicios cercanos
 st.subheader("📍 Localización y servicios cercanos")
+
+# Inputs para la localización del inmueble
 ubicacion = st.text_input("📍 Dirección del inmueble", "Introduce la dirección del inmueble aquí")
 
 # Inputs para los servicios cercanos
@@ -116,6 +114,20 @@ st.write(f"🔑 **Dirección**: {ubicacion}")
 st.write(f"🏙 **Servicios cercanos**: {descripcion_servicios}")
 if descripcion_cercania:
     st.write(f"🌊/🏞 **Cercanía**: {descripcion_cercania}")
+
+
+# Precio y situación legal
+st.subheader("💶 Precio y situación")
+precio = st.number_input("Precio del inmueble (€)", min_value=0)
+gastos = st.number_input("Gastos de comunidad (€ / mes)", min_value=0)
+situacion = st.selectbox("¿Situación excepcional?", [
+    "No, en ninguna situación excepcional", "Ocupada ilegalmente", "Alquilada, con inquilinos", "Nuda propiedad"])
+
+# preguntar al usuario si quiere añadir alguna informacion adicional de la propiedad que sea relevante
+st.subheader("📝 Información adicional")
+informacion_adicional = st.text_area("¿Hay algo más que quieras añadir sobre la propiedad?")
+if informacion_adicional:
+    st.write("Información adicional:", informacion_adicional)
 
 # **Nuevo**: Cargar imágenes o planos
 st.subheader("📸 Añadir imágenes o planos del inmueble")
@@ -220,4 +232,4 @@ Crea un anuncio breve, directo y emocional, destacando las características más
             st.text_area("✍️ Anuncio generado:", value=anuncio, height=300)
         
         except Exception as e:
-            st.error(f"❌ Ocurrió un error: {e}")   
+            st.error(f"❌ Ocurrió un error: {e}") 
