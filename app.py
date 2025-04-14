@@ -186,17 +186,20 @@ Extras:
 Por favor, destaca todos estos aspectos, especialmente la piscina, la terraza, la cercanía al mar y las zonas comerciales cercanas. Crea un anuncio largo, detallado y persuasivo, resalta los beneficios emocionales de vivir en esta propiedad (luz, vistas, tranquilidad, ubicación) y termina con una llamada a la acción clara, enfocada en atraer al comprador ideal para esta propiedad.
 """
 
-            # Usar la nueva API de OpenAI
-            response = openai.completions.create(
-                model="gpt-3.5-turbo",  # Usar GPT-3.5-turbo
-                prompt=mensaje_usuario,
-                max_tokens=500,
-                temperature=0.7,
-            )
+# Usar la nueva API de OpenAI
+response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",  # Usar GPT-3.5-turbo
+    messages=[  # Aquí se usa el formato correcto para el modelo de chat
+        {"role": "system", "content": "Eres un asistente de IA que ayuda a redactar anuncios inmobiliarios."},
+        {"role": "user", "content": mensaje_usuario}  # El mensaje del usuario con los datos del inmueble
+    ],
+    max_tokens=500,
+    temperature=0.7,
+)
 
-            anuncio = response['choices'][0]['text'].strip()
-            st.success("✅ Anuncio generado con éxito")
-            st.text_area("✍️ Anuncio generado:", value=anuncio, height=200)
+# Obtener la respuesta del anuncio generado
+anuncio = response['choices'][0]['message']['content'].strip()
 
-        except Exception as e:
-            st.error(f"❌ Ocurrió un error: {e}")
+# Mostrar el anuncio generado
+st.success("✅ Anuncio generado con éxito")
+st.text_area("✍️ Anuncio generado:", value=anuncio, height=200)
