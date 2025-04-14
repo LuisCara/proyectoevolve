@@ -186,49 +186,15 @@ Extras:
 Por favor, destaca todos estos aspectos, especialmente la piscina, la terraza, la cercanía al mar y las zonas comerciales cercanas. Crea un anuncio largo, detallado y persuasivo, resalta los beneficios emocionales de vivir en esta propiedad (luz, vistas, tranquilidad, ubicación) y termina con una llamada a la acción clara, enfocada en atraer al comprador ideal para esta propiedad.
 """
 
-            elif destino == "Redes sociales (Facebook, Instagram)":
-                mensaje_usuario = f"""
-Redacta un anuncio inmobiliario atractivo y persuasivo, adecuado para publicar en redes sociales como Facebook e Instagram. El anuncio debe ser corto, visualmente impactante y emocionalmente atractivo.
-
-Datos del inmueble:
-- Tipo de propiedad: {tipo}
-- Estado: {estado}
-- Superficie: {m2} m²
-- Habitaciones: {habitaciones}
-- Baños: {baños}
-- Precio: {precio} €
-- Extras destacados: {', '.join(extras_vivienda) if extras_vivienda else 'Ninguno'}
-
-Extras clave a destacar para este anuncio:
-- Piscina: {"Sí" if "Piscina" in extras_edificio else "No"}
-- Terraza: {"Sí" if "Terraza" in extras_vivienda else "No"}
-- Cercanía al mar: {"No"}  # Valor por defecto ya que no se proporciona entrada para cercanía al mar
-- Zonas comerciales cercanas: {"No"}  # Valor por defecto ya que no se proporciona entrada para zonas comerciales
-
-Crea un anuncio breve, directo y emocional, destacando las características más atractivas de la propiedad, como la piscina, la terraza y la cercanía al mar. Usa frases cortas, imágenes visuales y una llamada a la acción clara, invitando a los usuarios a visitar la propiedad.
-"""
-
-            # Llamada a OpenAI usando la API moderna para GPT-3.5-turbo
-            response = openai.ChatCompletion.create(
+            # Usar la nueva API de OpenAI
+            response = openai.completions.create(
                 model="gpt-3.5-turbo",  # Usar GPT-3.5-turbo
-                messages=[
-                    {
-                        "role": "system",
-                        "content": (
-                            "Eres el mayor experto en anuncios inmobiliarios, especializado en marketing emocional y persuasivo. "
-                            "Debes crear anuncios que resalten los aspectos más atractivos de las propiedades, como piscina, terraza, cercanía al mar, "
-                            "zonas comerciales cercanas, y la calidad de vida en la zona. Utiliza un tono atractivo y emocionante para captar la atención de los compradores, que no sean demasiado largos, pero que sean informativos y persuasivos. "
-                            "Recuerda que el objetivo es atraer al comprador ideal para esta propiedad."
-                        )
-                    },
-                    {
-                        "role": "user",
-                        "content": mensaje_usuario
-                    }
-                ]
+                prompt=mensaje_usuario,
+                max_tokens=500,
+                temperature=0.7,
             )
 
-            anuncio = response['choices'][0]['message']['content'].strip()
+            anuncio = response['choices'][0]['text'].strip()
             st.success("✅ Anuncio generado con éxito")
             st.text_area("✍️ Anuncio generado:", value=anuncio, height=200)
 
