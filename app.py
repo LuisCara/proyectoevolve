@@ -151,12 +151,10 @@ if st.button("📝 Generar anuncio"):
         Genera un texto convincente y persuasivo que atraiga a los compradores y arrendadores interesados. Incluye un llamado a la acción al final.
         """
         
-        response = openai.Completion.create(
+        response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             prompt=prompt,
             max_tokens=300,
-            n=1,
-            stop=None,
             temperature=0.7,
         )
         
