@@ -152,7 +152,7 @@ if st.button("📝 Generar anuncio"):
         """
         
         response = openai.Completion.create(
-            model="text-davinci-003",
+            model="gpt-3.5-turbo",
             prompt=prompt,
             max_tokens=300,
             n=1,
