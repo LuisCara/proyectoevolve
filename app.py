@@ -151,13 +151,18 @@ if st.button("📝 Generar anuncio"):
         Genera un texto convincente y persuasivo que atraiga a los compradores y arrendadores interesados. Incluye un llamado a la acción al final.
         """
         
+        # Cambio en la llamada a la API de OpenAI (utilizando ChatCompletion)
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            prompt=prompt,
+            model="gpt-3.5-turbo",  # O "gpt-4" si tienes acceso
+            messages=[
+                {"role": "system", "content": "Eres un asistente de anuncios inmobiliarios."},
+                {"role": "user", "content": prompt}
+            ],
             max_tokens=300,
             temperature=0.7,
         )
         
-        anuncio_generado = response.choices[0].text.strip()
+        # La respuesta de la API
+        anuncio_generado = response['choices'][0]['message']['content'].strip()
+        
         st.write("🌟 **Anuncio generado**:")
-        st.write(anuncio_generado)
