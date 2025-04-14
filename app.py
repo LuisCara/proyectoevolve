@@ -3,6 +3,8 @@ import openai
 import os
 from dotenv import load_dotenv
 from PIL import Image
+from openai.error import OpenAIError
+
 
 # Cargar las variables de entorno desde .env
 load_dotenv()
@@ -153,6 +155,12 @@ destino = st.radio(
 
 # Botón para generar el anuncio
 # Preparar el mensaje para la IA según el destino
+import openai
+from openai.error import OpenAIError  # Asegúrate de importar OpenAIError
+
+# Configura la clave API de OpenAI
+openai.api_key = 'your-api-key-here'
+
 try:
     # Preparar el mensaje para la IA según el destino
     if destino == "Portales inmobiliarios (Idealista, Fotocasa, Milanuncios)":
@@ -202,8 +210,8 @@ try:
     st.success("✅ Anuncio generado con éxito")
     st.text_area("✍️ Anuncio generado:", value=anuncio, height=200)
 
-except openai.error.OpenAIError as e:
+except OpenAIError as e:  # Aquí capturas el error específico de OpenAI
     st.error(f"❌ Error al generar el anuncio de OpenAI: {e}")
 
-except Exception as e:
+except Exception as e:  # Captura cualquier otro error general
     st.error(f"❌ Error inesperado: {e}")
