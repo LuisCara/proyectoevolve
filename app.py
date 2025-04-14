@@ -51,7 +51,7 @@ suelo_interior = st.selectbox("Tipo de suelo en el interior", [
     "Parquet", "Tarima flotante", "Baldosa cerámica", "Mármol", "Granito", "Vinílico", "Moqueta", "Cemento pulido", "Laminado", "Corcho"
 ])
 suelo_exterior = st.selectbox("Tipo de suelo en el exterior", [
-    "Grava", "Pavimento de adoquín", "Hormigón", "Terracota", "Decking de madera", "Piedra natural", "Césped artificial", "Pavimento permeable"
+    "Ninguno","Grava", "Pavimento de adoquín", "Hormigón", "Terracota", "Decking de madera", "Piedra natural", "Césped artificial", "Pavimento permeable"
 ])
 
 # Características adicionales
