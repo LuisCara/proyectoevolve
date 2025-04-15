@@ -23,6 +23,10 @@ with col1:
 with col2:
     st.markdown("<h1 style='text-align: center;'>🏡 AnuncioProAI: Creador de anuncios inmobiliarios</h1>", unsafe_allow_html=True)
 
+# Tipo de operación
+st.subheader("⚙️ Tipo de operación")
+tipo_operacion = st.selectbox("¿Se trata de una venta o alquiler?", ["Venta", "Alquiler","Alquiler vacacional", "Alquiler con opción a compra"])
+
 # Sección de datos del inmueble
 st.subheader("📋 Características del inmueble")
 tipo = st.selectbox("Tipo de propiedad", [
@@ -48,7 +52,7 @@ orientacion = st.selectbox("Orientación", [
 # Selección de tipos de suelo
 st.subheader("🪵 Tipos de suelo")
 suelo_interior = st.selectbox("Tipo de suelo en el interior", [
-    "Parquet", "Tarima flotante", "Baldosa cerámica", "Mármol", "Granito", "Vinílico", "Moqueta", "Cemento pulido", "Laminado", "Corcho"
+    "Gres","Parquet", "Tarima flotante", "Baldosa cerámica", "Mármol", "Granito", "Vinílico", "Moqueta", "Cemento pulido", "Laminado", "Corcho"
 ])
 suelo_exterior = st.selectbox("Tipo de suelo en el exterior", [
     "Ninguno", "Grava", "Pavimento de adoquín", "Hormigón", "Terracota", "Decking de madera", "Piedra natural", "Césped artificial", "Pavimento permeable"
@@ -146,6 +150,7 @@ destino = st.radio(
 # Función para recopilar datos
 def recopilar_datos():
     return {
+        "tipo_operacion": tipo_operacion,
         "tipo": tipo,
         "estado": estado,
         "m2": m2,
@@ -179,29 +184,44 @@ def recopilar_datos():
 # Función para generar el anuncio con la nueva API de OpenAI
 def generar_anuncio(datos):
     prompt = f"""
-Eres un experto en marketing inmobiliario con experiencia en la creación de anuncios optimizados para portales inmobiliarios como Idealista, Fotocasa y Milanuncios.
-Tu tarea es generar un anuncio de venta para una propiedad inmobiliaria en el mercado español, usando un tono persuasivo, profesional y claro. El anuncio debe
-resaltar las mejores características de la propiedad y atraer tanto a compradores como a inquilinos potenciales. El objetivo es optimizar el anuncio para maximizar las visitas y consultas.
-Crea un anuncio de alto nivel para una propiedad con las siguientes características:
+Eres un experto en marketing inmobiliario internacional, especializado en crear anuncios profesionales y persuasivos para la venta o alquiler de propiedades en distintos países y plataformas.
 
-🏡 Tipo de propiedad: {datos['tipo']}
-📍 Ubicación: {datos['ubicacion']}
-📐 Superficie: {datos['m2']} m² construidos, {datos['m2_utiles']} m² útiles, {datos['m2_terreno']} m² de terreno
-🛏 Habitaciones: {datos['habitaciones']}, 🛁 Baños: {datos['baños']}
-🌞 Fachada: {datos['fachada']} | Orientación: {datos['orientacion']}
-📈 Estado: {datos['estado']}, Certificado energético: {datos['certificado']}
-🏗 Suelo interior: {datos['suelo_interior']}, exterior: {datos['suelo_exterior']}
-✨ Extras vivienda: {', '.join(datos['extras_vivienda']) if datos['extras_vivienda'] else 'Ninguno'}
-🏢 Extras edificio: {', '.join(datos['extras_edificio']) if datos['extras_edificio'] else 'Ninguno'}
-📸 Terraza: {datos['metros_terraza']} m², Balcón: {datos['metros_balcon']} m², Trastero: {datos['metros_trastero']} m², Garaje: {datos['metros_garaje']} m²
-🗺 Servicios cercanos: {datos['descripcion_servicios']}
-🌊/🏞 Otros: {datos['descripcion_cercania']}
-💶 Precio: {datos['precio']} € | Gastos comunidad: {datos['gastos']} €
-⚠ Situación: {datos['situacion']}
-📝 Información adicional: {datos['informacion_adicional']}
-📣 Destino del anuncio: {datos['destino']}
+Tu objetivo es generar un anuncio de alto impacto, optimizado para:
 
-El texto debe ser atractivo, persuasivo, sin repetir datos de forma robótica. Usa frases emotivas, beneficios para el comprador y estilo comercial. Añade emojis si es para redes sociales.
+1. **Portales inmobiliarios** como Idealista, Fotocasa, Milanuncios, Zillow, Immowelt, SeLoger, Rightmove…
+2. **Redes sociales** como Instagram, Facebook, TikTok o LinkedIn.
+
+El anuncio debe:
+
+- Ser atractivo, claro, natural y persuasivo.
+- Destacar los beneficios y el estilo de vida que ofrece la propiedad.
+- Adaptarse al canal:
+  - Si el destino es "portales inmobiliarios", escribe con estilo profesional y estructurado, orientado a SEO y con llamadas a la acción claras.
+  - Si el destino es "redes sociales", usa un estilo más directo, emocional, con emojis (donde encajen), y termina con hashtags relevantes según el país o ciudad.
+
+Utiliza la información facilitada para redactar el texto sin repetir datos de forma robótica. No enumeres todo como una lista. Transforma los datos en frases que comuniquen valor real.
+
+📝 DATOS DISPONIBLES:
+
+🏷 Tipo de operación: {datos['tipo_operacion']}  
+🏡 Tipo de propiedad: {datos['tipo']}  
+📍 Ubicación: {datos['ubicacion']}  
+📐 Superficie: {datos['m2']} m² construidos, {datos['m2_utiles']} m² útiles, {datos['m2_terreno']} m² de terreno  
+🛏 Habitaciones: {datos['habitaciones']} | 🛁 Baños: {datos['baños']}  
+🌞 Fachada: {datos['fachada']} | Orientación: {datos['orientacion']}  
+📈 Estado: {datos['estado']} | Certificado energético: {datos['certificado']}  
+🏗 Suelo interior: {datos['suelo_interior']} | Suelo exterior: {datos['suelo_exterior']}  
+✨ Extras vivienda: {', '.join(datos['extras_vivienda']) if datos['extras_vivienda'] else 'Ninguno'}  
+🏢 Extras edificio: {', '.join(datos['extras_edificio']) if datos['extras_edificio'] else 'Ninguno'}  
+📸 Terraza: {datos['metros_terraza']} m² | Balcón: {datos['metros_balcon']} m² | Trastero: {datos['metros_trastero']} m² | Garaje: {datos['metros_garaje']} m²  
+🗺 Servicios cercanos: {datos['descripcion_servicios']}  
+🌊/🏞 Otros (vistas, entorno, etc.): {datos['descripcion_cercania']}  
+💶 Precio: {datos['precio']} € | Gastos comunidad: {datos['gastos']} €  
+⚠ Situación (ocupado, libre, alquilado, etc.): {datos['situacion']}  
+📝 Información adicional: {datos['informacion_adicional']}  
+📣 Destino del anuncio: {datos['destino']}  
+
+🎯 Recuerda: escribe como si fueras un copywriter de alto nivel. Seduce, informa y convence.
 """
 
     response = openai.chat.completions.create(
