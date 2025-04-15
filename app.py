@@ -61,8 +61,8 @@ suelo_exterior = st.selectbox("Tipo de suelo en el exterior", [
 # Características adicionales
 st.subheader("✨ Extras")
 extras_vivienda = st.multiselect("Características de la vivienda", [
-    "Amueblado", "Armarios empotrados", "Aire acondicionado", "Terraza", "Balcón", "Trastero", "Plaza de garaje"])
-extras_edificio = st.multiselect("Características del edificio", ["Piscina", "Zona verde"])
+    "Semiamueblado","Amueblado", "Armarios empotrados", "Aire acondicionado", "Terraza", "Balcón","Lavadero","Chimenea", "Trastero", "Plaza de garaje"])
+extras_edificio = st.multiselect("Características del edificio", ["Piscina", "Zona verde", "Gimnasio", "Portero", "Acceso adaptado", "Ascensor", "Zonas comunes","zona infantil", "Pista de tenis","Pista de pádel", "Sauna", "Jacuzzi"])
 
 metros_terraza = 0
 metros_balcon = 0
@@ -88,6 +88,8 @@ servicios_cercanos = st.multiselect(
 )
 
 cerca_playa = st.checkbox("Cerca de la playa")
+primera_linea_de_playa = st.checkbox("Primera línea de playa")
+segunda_linea_de_playa = st.checkbox("Segunda línea de playa")
 cerca_montana = st.checkbox("Cerca de la montaña")
 
 distancia_playa = None
@@ -98,7 +100,7 @@ if cerca_montana:
     distancia_montana = st.number_input("¿A qué distancia está la montaña (en metros)?", min_value=0, step=10)
 
 descripcion_servicios = "Estos son los servicios cercanos a la propiedad: "
-if servicios_cercanos:
+if 'servicios_cercanos' in locals() and servicios_cercanos:
     descripcion_servicios += ", ".join(servicios_cercanos)
 else:
     descripcion_servicios = "No se han seleccionado servicios cercanos."
@@ -109,7 +111,7 @@ if cerca_playa:
 elif cerca_montana:
     descripcion_cercania = f"Está a {distancia_montana} metros de la montaña."
 
-st.write(f"🔑 **Dirección**: {ubicacion}")
+st.write(f"🔑 **Dirección**: {ubicacion if 'ubicacion' in locals() else 'No se ha proporcionado una dirección.'}")
 st.write(f"🏙 **Servicios cercanos**: {descripcion_servicios}")
 if descripcion_cercania:
     st.write(f"🌊/🏞 **Cercanía**: {descripcion_cercania}")
@@ -240,3 +242,4 @@ if st.button("✨ Generar anuncio optimizado"):
     anuncio = generar_anuncio(datos)
     st.success("✅ Anuncio generado con éxito:")
     st.text_area("📝 Anuncio generado", value=anuncio, height=300)
+
